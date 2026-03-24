@@ -5,5 +5,34 @@ npm install -D typescript ts-node nodemon @types/express @types/cors @types/cook
 
 //frontend
 
+npm create vite@latest . -- --template react-ts
+
 npm install react react-dom react-router-dom axios lucide-react yet-another-react-lightbox
-npm install -D vite @vitejs/plugin-react typescript @types/react @types/react-dom @types/node tailwindcss postcss autoprefixer eslint@^9.39.1 globals eslint-plugin-react-hooks eslint-plugin-react-refresh @eslint/js@^9.39.1 typescript-eslint
+npm install
+npm install react-router-dom axios lucide-react yet-another-react-lightbox
+npm install -D tailwindcss@3 postcss autoprefixer
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {}, 
+  },
+  plugins: [],
+} //tailwind.config.js
+
+
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+} // postcss.config.js
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
