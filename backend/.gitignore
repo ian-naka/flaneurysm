@@ -1,0 +1,24 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente (NUNCA subir para o GitHub)
+.env
+.env.*
+
+# Arquivos compilados do TypeScript
+dist/
+build/
+
+# Uploads do Multer (Ignora as fotos, mas mantém a estrutura da pasta)
+public/uploads/*
+!public/uploads/.gitkeep
+public/uploads/cache/*
+!public/uploads/cache/.gitkeep
+
+# Logs de erro
+npm-debug.log*
+yarn-error.log*
+
+# Arquivos do sistema operacional e IDE
+.DS_Store
+.vscode/
