@@ -36,3 +36,17 @@ export default {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+//criar no backend  tsconfig.js 
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "esModuleInterop": true, 
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
+}
