@@ -1,0 +1,16 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+  
+    "frontend/eslint.config.js": true,
+    "frontend/postcss.config.js": true,
+   // "frontend/tailwind.config.js": true,
+   // "frontend/tsconfig.app.json": true,
+  //"frontend/tsconfig.json": true,
+    //"frontend/tsconfig.node.json": true,
+   // "frontend/vite.config.ts": true,
+    "frontend/package-lock.json": true,
+    "frontend/README.md": true
+  }
+}
