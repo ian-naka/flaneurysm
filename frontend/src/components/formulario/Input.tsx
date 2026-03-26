@@ -9,7 +9,7 @@ const Input: React.FC<InputProps> = ({ id, ...props }) => {
         <input 
             id={id}
             {...props}
-            className="w-full px-[15px] py-[12px] text-[14px] text-[#333333] bg-white border border-[#e2e2e2] focus:border-[#a5002c] focus:outline-none transition-colors duration-200 placeholder:text-[#888888] rounded-none"
+            className="w-full px-[15px] py-[12px] text-[14px] text-[#333333] bg-white border border-[#e2e2e2] focus:border-[#a5002c] focus:outline-none transition-colors duration-200 placeholder:text-[#888888] rounded-[10px]"
         />
     );
 };

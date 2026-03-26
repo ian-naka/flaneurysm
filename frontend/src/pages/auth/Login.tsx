@@ -40,22 +40,22 @@ const Login = () => {
     };
 
     return (
-        <div 
+        <div
             className="min-h-screen flex items-center justify-center p-4 font-sans"
             style={{
-                background: 'linear-gradient(135deg, #3B2F2B 0%, #502A3C 33%, #101202 66%, #3B2F2B 100%)',
+                background: 'linear-gradient(135deg, oklab(39.2% -0.041 0.011) 6.19%, oklab(34.1% 0.061 -0.010) 46.77%, oklab(47.8% 0.026 0.015) 90.53%)',
             }}
         >
             <div className="w-full max-w-[400px] flex flex-col items-center">
 
-                <h3 className="text-[36px] text-[#FCFCFC] font-bold mb-1 text-center drop-shadow-md">
-                    Acesso
-                </h3>
-                <div className="text-[15px] text-[#FCFCFC] mb-6 text-center drop-shadow-md">
-                    Entre com as credenciais!
+                <h1 className="text-[42px] text-[#FCFCFC] font-bold mb-1 text-center drop-shadow-md">
+                    Bem Vindo
+                </h1>
+                <div className="text-[15px] text-[#FCFCFC] mb-6 text-center drop-shadow-md opacity-90">
+                    Faça login para continuar!
                 </div>
 
-                <div className="bg-[#FCFCFC] w-full p-[30px] shadow-lg">
+                <div className="bg-white w-full p-[30px] shadow-lg rounded-[40px] border border-white/10">
 
                     <form onSubmit={handleLogin} className="flex flex-col gap-[15px]">
 
@@ -90,9 +90,9 @@ const Login = () => {
                         <div className="text-center mt-3">
                             <a
                                 href="#"
-                                className="text-[#a5002c] text-[14px] hover:text-[#820022] hover:underline transition-colors"
+                                className="text-[#512B3C] text-[14px] font-medium hover:underline transition-colors"
                             >
-                                Perdeu a Senha
+                                Perdeu a Senha?
                             </a>
                         </div>
 
