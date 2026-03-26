@@ -17,6 +17,11 @@ RegistroTexto.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    slug: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
     thumb: {
       type: DataTypes.STRING,
       allowNull: true,
