@@ -76,17 +76,18 @@ export default class RegistroController {
                 return;
             }
 
-            const payloadData = {
-                ...dadosValidados,
-                thumb: thumbPath,
-                galeria: galeriaPaths,
-            };
-
             let novoRegistro;
             if (isTexto) {
-                novoRegistro = await RegistroTexto.create(payloadData);
+                novoRegistro = await RegistroTexto.create({
+                    ...dadosValidados,
+                    thumb: thumbPath,
+                });
             } else {
-                novoRegistro = await RegistroGaleria.create(payloadData);
+                novoRegistro = await RegistroGaleria.create({
+                    ...dadosValidados,
+                    thumb: thumbPath,
+                    galeria: galeriaPaths,
+                });
             }
 
             res.status(201).json({
