@@ -64,9 +64,11 @@ const CriarPostagem = () => {
             if (thumb) {
                 formData.append('thumb', thumb);
             }
-            galeria.forEach((file) => {
-                formData.append('galeria', file);
-            });
+            if (tipo === 'galeria') {
+                galeria.forEach((file) => {
+                    formData.append('galeria', file);
+                });
+            }
 
             const token = localStorage.getItem('token');
 
@@ -197,26 +199,28 @@ const CriarPostagem = () => {
                     </div>
 
                     {/* upload de galeria de imagens */}
-                    <div className="bg-white shadow-sm border border-gray-200 rounded-[10px] overflow-hidden">
-                        <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
-                            <h2 className="font-semibold text-gray-700">
-                                Galeria de Imagens {tipo === 'galeria' && <span className="text-red-500">*</span>}
-                            </h2>
+                    {tipo === 'galeria' && (
+                        <div className="bg-white shadow-sm border border-gray-200 rounded-[10px] overflow-hidden">
+                            <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                                <h2 className="font-semibold text-gray-700">
+                                    Galeria de Imagens <span className="text-red-500">*</span>
+                                </h2>
+                            </div>
+                            <div className="p-4">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleGaleriaChange}
+                                    required
+                                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-[10px] file:border-0 file:text-sm file:font-semibold file:bg-[#512B3C] file:text-white hover:file:bg-[#3D202D] file:transition-colors file:cursor-pointer"
+                                />
+                                {galeria.length > 0 && (
+                                    <p className="mt-2 text-sm text-gray-500">{galeria.length} arquivo(s) selecionado(s)</p>
+                                )}
+                            </div>
                         </div>
-                        <div className="p-4">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                onChange={handleGaleriaChange}
-                                required={tipo === 'galeria'}
-                                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-[10px] file:border-0 file:text-sm file:font-semibold file:bg-[#512B3C] file:text-white hover:file:bg-[#3D202D] file:transition-colors file:cursor-pointer"
-                            />
-                            {galeria.length > 0 && (
-                                <p className="mt-2 text-sm text-gray-500">{galeria.length} arquivo(s) selecionado(s)</p>
-                            )}
-                        </div>
-                    </div>
+                    )}
 
                     <Button type="submit">
                         Publicar Registro
