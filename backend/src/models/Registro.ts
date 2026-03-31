@@ -6,5 +6,4 @@ export default abstract class Registro extends Model {
     declare titulo: string;
     declare slug: string;
     declare thumb: string | null;
-    declare galeria: string | null;
 }

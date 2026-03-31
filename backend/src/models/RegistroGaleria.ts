@@ -4,6 +4,7 @@ import Registro from './Registro';
 
 class RegistroGaleria extends Registro {
   declare resumo: string;
+  declare galeria: string;
 }
 
 RegistroGaleria.init(
