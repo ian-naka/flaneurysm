@@ -26,10 +26,6 @@ RegistroTexto.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    galeria: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     descricao: {
       type: DataTypes.TEXT,
       allowNull: false,
