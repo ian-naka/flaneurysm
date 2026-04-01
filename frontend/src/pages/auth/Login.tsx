@@ -32,7 +32,7 @@ const Login = () => {
             localStorage.setItem('adminId', dados.adminId);
 
             setFlashMessage('login realizado com sucesso!', 'success');
-            navigate('/criar-registro');
+            navigate('/admin');
 
         } catch (error) {
             setFlashMessage(error instanceof Error ? error.message : String(error), 'error');
