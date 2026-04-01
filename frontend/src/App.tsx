@@ -9,7 +9,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/criar-registro" element={
           <ProtectedRoute>
             <CriarPostagem />
@@ -20,7 +21,6 @@ function App() {
             <AdminHub />
           </ProtectedRoute>
         } />
-        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
   );

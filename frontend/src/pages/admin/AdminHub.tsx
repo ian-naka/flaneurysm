@@ -12,7 +12,7 @@ const AdminHub: React.FC = () => {
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('adminId');
-        navigate('/');
+        navigate('/login');
     };
 
     return (
@@ -31,7 +31,7 @@ const AdminHub: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-4">
                         <button
-                            onClick={() => navigate('/dashboard')}
+                            onClick={() => navigate('/')}
                             className="text-[#C9B3BE] hover:text-white text-sm font-medium transition-colors flex items-center gap-1.5"
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

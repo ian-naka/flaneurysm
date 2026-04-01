@@ -87,7 +87,7 @@ const CriarPostagem = () => {
             }
 
             setFlashMessage('Registro criado com sucesso!', 'success');
-            navigate('/');
+            navigate('/admin');
 
         } catch (error) {
             setFlashMessage(error instanceof Error ? error.message : String(error), 'error');
