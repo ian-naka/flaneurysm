@@ -9,9 +9,12 @@ import sequelize from './db/conn'
 
 //importa models
 import User from './models/User';
+import DashboardConfig from './models/DashboardConfig';
 
 //importa rotas
 import userRoutes from './routes/userRoutes';
+import registroRoutes from './routes/registroRoutes';
+import dashboardConfigRoutes from './routes/dashboardConfigRoutes';
 
 //importa controller
 import { conexaoBanco } from './db/conn';
@@ -31,6 +34,9 @@ app.use(cors({
 app.use(express.json()); //permite ler o body em json
 app.use(cookieParser()); //manipulacao dos HttpOnly Cookies para o JWT
 
+//servir arquivos estáticos de uploads
+app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
+
 //protecao contra ataques
 const limite = rateLimit({
     windowMs: 15 * 60 * 1000, //15 minutos
@@ -41,9 +47,10 @@ const limite = rateLimit({
 
 const PORT = process.env.PORT || '';
 
-app.use('/auth', userRoutes)
-
 //rotas
+app.use('/auth', userRoutes);
+app.use('/registros', registroRoutes);
+app.use('/dashboard-config', dashboardConfigRoutes);
 
 //testa conexao com o banco
 conexaoBanco().then(async () => {
