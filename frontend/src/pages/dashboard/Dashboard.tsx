@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '../../components/sidebar/Sidebar';
+import api from '../../services/api';
+import HeroSection from '../../components/dashboard/HeroSection';
+import HighlightSection from '../../components/dashboard/HighlightSection';
+import CardsSection from '../../components/dashboard/CardsSection';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -22,11 +26,8 @@ const Dashboard = () => {
   useEffect(() => {
       const fetchConfig = async () => {
           try {
-              const res = await fetch(`${API_URL}/dashboard-config`);
-              if (res.ok) {
-                  const data = await res.json();
-                  setConfig(data);
-              }
+              const res = await api.get('/dashboard-config');
+              setConfig(res.data);
           } catch (error) {
               console.error("Erro ao carregar configurações da dashboard:", error);
           }
@@ -69,62 +70,26 @@ const Dashboard = () => {
           </svg>
         </button>
 
-        {/* Hero Section (Design extraído via MCP J-0) */}
-        <div className="flex w-full h-auto min-h-[420px] relative overflow-hidden shadow-xl shrink-0 flex-col md:flex-row">
-          <div className="flex flex-col justify-end w-full md:w-1/2 h-full py-16 pl-24 pr-12 md:py-20 md:pl-32" style={{ backgroundImage: 'linear-gradient(in oklab 160deg, oklab(38% 0.061 -0.011) 0%, oklab(40.2% 0.065 -0.011) 45%, oklab(36.9% 0.058 -0.011) 100%)' }}>
-            <h1 className="uppercase tracking-[2px] whitespace-pre-wrap text-white font-black text-3xl sm:text-[42px] leading-tight drop-shadow-lg">
-              {heroTitulo}
-            </h1>
-            <p className="mt-3 tracking-[0.5px] text-[#C9B3BE] text-base">
-              {heroSubtitulo}
-            </p>
-          </div>
-          <div className="w-full md:w-1/2 flex items-center justify-center min-h-[300px] border-l border-white/5 shadow-inner overflow-hidden" style={{ backgroundImage: 'linear-gradient(in oklab 170deg, oklab(22.8% 0.009 -0.037) 0%, oklab(24.7% 0.009 -0.040) 60%, oklab(21.7% 0.007 -0.030) 100%)' }}>
-            {heroImagem ? (
-                <img src={heroImagem} alt="Hero" className="w-full h-full object-cover" />
-            ) : (
-                <span className="text-white/40 text-sm font-semibold tracking-widest uppercase border border-dashed border-white/20 p-4 rounded-xl">Espaço para Foto</span>
-            )}
-          </div>
-        </div>
+        {/* Hero Section */}
+        <HeroSection 
+          heroTitulo={heroTitulo} 
+          heroSubtitulo={heroSubtitulo} 
+          heroImagem={heroImagem} 
+        />
 
         {/* Highlights Fotos */}
-        <div className="flex flex-col-reverse md:flex-row w-full h-auto min-h-[300px] overflow-hidden relative shadow-lg shrink-0">
-          <div className="w-full md:w-1/2 h-[300px] sm:h-[400px] bg-black/30 border-r border-white/5 flex items-center justify-center overflow-hidden">
-            {highlightImagem ? (
-                <img src={highlightImagem} alt="Highlight" className="w-full h-full object-cover" />
-            ) : (
-                <span className="text-white/40 text-sm font-semibold tracking-widest uppercase border border-dashed border-white/20 p-4 rounded-xl">Espaço para Foto</span>
-            )}
-          </div>
-          <div className="w-full md:w-1/2 h-auto min-h-[250px] md:min-h-[400px] flex items-center justify-center p-12" style={{ backgroundImage: 'linear-gradient(in oklab 160deg, oklab(38.2% -0.040 0.010) 0%, oklab(40.1% -0.039 0.009) 50%, oklab(36.7% -0.039 0.012) 100%)' }}>
-            <h2 className="uppercase text-center tracking-[2px] text-white font-black text-2xl md:text-3xl lg:text-4xl leading-tight max-w-lg">
-              {highlightTitulo}
-            </h2>
-          </div>
-        </div>
+        <HighlightSection 
+          highlightTitulo={highlightTitulo} 
+          highlightImagem={highlightImagem} 
+        />
 
         {/* Bottom Cards Area */}
-        <div className="flex flex-wrap w-full justify-center lg:justify-between py-16 px-6 md:px-12 lg:px-20 gap-8 lg:gap-16 relative" style={{ backgroundImage: 'linear-gradient(in oklab 170deg, oklab(46.8% 0.027 0.016) 0%, oklab(48.2% 0.027 0.015) 45%, oklab(44.9% 0.022 0.014) 100%)' }}>
-          {[{ id: 1, title: card1Titulo, img: card1Imagem }, { id: 2, title: card2Titulo, img: card2Imagem }].map((card) => (
-            <div key={card.id} className="flex flex-col w-full sm:w-80 md:w-[360px] rounded-2xl overflow-hidden shadow-2xl shrink-0 cursor-pointer hover:-translate-y-2 hover:shadow-3xl transition-all duration-300">
-               <div className="w-full h-[220px] flex items-center justify-center overflow-hidden" style={{ backgroundImage: 'linear-gradient(in oklab 155deg, oklab(36.6% 0.022 0.007) 0%, oklab(38.8% 0.021 0.007) 50%, oklab(35.7% 0.020 0.007) 100%)' }}>
-                   {card.img ? (
-                       <img src={card.img} alt={`Card ${card.id}`} className="w-full h-full object-cover" />
-                   ) : (
-                       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#888888" strokeWidth="1.5">
-                         <rect x="3" y="3" width="18" height="18" rx="2" />
-                         <circle cx="8.5" cy="8.5" r="1.5" />
-                         <path d="M21 15l-5-5L5 21" />
-                       </svg>
-                   )}
-               </div>
-               <div className="w-full py-5 px-6" style={{ backgroundImage: 'linear-gradient(in oklab 90deg, oklab(38.2% -0.040 0.010) 0%, oklab(39.7% -0.039 0.009) 50%, oklab(37.5% -0.039 0.010) 100%)' }}>
-                 <h3 className="uppercase tracking-[1px] text-white font-bold text-sm">{card.title}</h3>
-               </div>
-            </div>
-          ))}
-        </div>
+        <CardsSection 
+          card1Titulo={card1Titulo} 
+          card1Imagem={card1Imagem} 
+          card2Titulo={card2Titulo} 
+          card2Imagem={card2Imagem} 
+        />
       </main>
     </div>
   );

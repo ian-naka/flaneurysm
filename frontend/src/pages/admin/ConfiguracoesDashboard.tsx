@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Input from '../../components/formulario/Input';
 import Button from '../../components/formulario/Button';
 import useFlashMessage from '../../hooks/useFlashMessage';
+import api from '../../services/api';
+import ImageUploadPreview from '../../components/admin/ImageUploadPreview';
 
-const API_URL = import.meta.env.VITE_API_URL;
 
 interface DashboardConfigData {
     heroTitulo: string;
@@ -45,9 +46,8 @@ const ConfiguracoesDashboard: React.FC = () => {
     useEffect(() => {
         const fetchConfig = async () => {
             try {
-                const resposta = await fetch(`${API_URL}/dashboard-config`);
-                if (resposta.ok) {
-                    const dados: DashboardConfigData = await resposta.json();
+                const resposta = await api.get('/dashboard-config');
+                const dados: DashboardConfigData = resposta.data;
                     setHeroTitulo(dados.heroTitulo || '');
                     setHeroSubtitulo(dados.heroSubtitulo || '');
                     setHighlightTitulo(dados.highlightTitulo || '');
@@ -57,7 +57,6 @@ const ConfiguracoesDashboard: React.FC = () => {
                     setHighlightImagemAtual(dados.highlightImagem);
                     setCard1ImagemAtual(dados.card1Imagem);
                     setCard2ImagemAtual(dados.card2Imagem);
-                }
             } catch (error) {
                 console.error('Erro ao buscar configurações:', error);
             } finally {
@@ -84,19 +83,8 @@ const ConfiguracoesDashboard: React.FC = () => {
             if (card1Imagem) formData.append('card1Imagem', card1Imagem);
             if (card2Imagem) formData.append('card2Imagem', card2Imagem);
 
-            const token = localStorage.getItem('token');
-            const resposta = await fetch(`${API_URL}/dashboard-config`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: formData,
-            });
-
-            const dados = await resposta.json();
-            if (!resposta.ok) {
-                throw new Error(dados.message || 'Erro ao salvar configurações.');
-            }
+            const resposta = await api.put('/dashboard-config', formData);
+            const dados = resposta.data;
 
             setFlashMessage('Configurações salvas com sucesso!', 'success');
 
@@ -112,8 +100,9 @@ const ConfiguracoesDashboard: React.FC = () => {
             setCard1Imagem(null);
             setCard2Imagem(null);
 
-        } catch (error) {
-            setFlashMessage(error instanceof Error ? error.message : String(error), 'error');
+        } catch (error: any) {
+            const mensagem = error.response?.data?.message || error.message || String(error);
+            setFlashMessage(mensagem, 'error');
         } finally {
             setSaving(false);
         }
@@ -127,35 +116,7 @@ const ConfiguracoesDashboard: React.FC = () => {
         );
     }
 
-    const renderImagemField = (
-        label: string,
-        imagemAtual: string | null,
-        onChange: (file: File | null) => void
-    ) => (
-        <div className="bg-white shadow-sm border border-gray-200 rounded-[10px] overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
-                <h3 className="font-semibold text-gray-700 text-sm">{label}</h3>
-            </div>
-            <div className="p-4">
-                {imagemAtual && (
-                    <div className="mb-3">
-                        <img
-                            src={`${API_URL}/uploads/${imagemAtual}`}
-                            alt={label}
-                            className="w-full max-w-[200px] h-auto rounded-lg object-cover border border-gray-200"
-                        />
-                        <p className="text-xs text-gray-400 mt-1">Imagem atual</p>
-                    </div>
-                )}
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => onChange(e.target.files?.[0] || null)}
-                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-[10px] file:border-0 file:text-sm file:font-semibold file:bg-[#512B3C] file:text-white hover:file:bg-[#3D202D] file:transition-colors file:cursor-pointer"
-                />
-            </div>
-        </div>
-    );
+
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
@@ -186,7 +147,7 @@ const ConfiguracoesDashboard: React.FC = () => {
                             onChange={(e) => setHeroSubtitulo(e.target.value)}
                         />
                     </div>
-                    {renderImagemField('Imagem do Hero', heroImagemAtual, setHeroImagem)}
+                    <ImageUploadPreview label="Imagem do Hero" imagemAtual={heroImagemAtual} onChange={setHeroImagem} />
                 </div>
             </div>
 
@@ -206,7 +167,7 @@ const ConfiguracoesDashboard: React.FC = () => {
                             onChange={(e) => setHighlightTitulo(e.target.value)}
                         />
                     </div>
-                    {renderImagemField('Imagem de Destaque', highlightImagemAtual, setHighlightImagem)}
+                    <ImageUploadPreview label="Imagem de Destaque" imagemAtual={highlightImagemAtual} onChange={setHighlightImagem} />
                 </div>
             </div>
 
@@ -229,7 +190,7 @@ const ConfiguracoesDashboard: React.FC = () => {
                                 onChange={(e) => setCard1Titulo(e.target.value)}
                             />
                         </div>
-                        {renderImagemField('Imagem Card 1', card1ImagemAtual, setCard1Imagem)}
+                        <ImageUploadPreview label="Imagem Card 1" imagemAtual={card1ImagemAtual} onChange={setCard1Imagem} />
                     </div>
                     {/* Card 2 */}
                     <div className="flex flex-col gap-3">
@@ -244,7 +205,7 @@ const ConfiguracoesDashboard: React.FC = () => {
                                 onChange={(e) => setCard2Titulo(e.target.value)}
                             />
                         </div>
-                        {renderImagemField('Imagem Card 2', card2ImagemAtual, setCard2Imagem)}
+                        <ImageUploadPreview label="Imagem Card 2" imagemAtual={card2ImagemAtual} onChange={setCard2Imagem} />
                     </div>
                 </div>
             </div>
