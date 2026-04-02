@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Input from '../../components/formulario/Input';
 import Button from '../../components/formulario/Button';
 import useFlashMessage from '../../hooks/useFlashMessage';
-
+import api from '../../services/api';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
@@ -14,19 +14,8 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const resposta = await fetch('http://localhost:4000/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, senha })
-            });
-
-            const dados = await resposta.json();
-
-            if (!resposta.ok) {
-                throw new Error(dados.message || 'Erro ao realizar login.');
-            }
+            const resposta = await api.post('/auth/login', { email, senha });
+            const dados = resposta.data;
 
             localStorage.setItem('token', dados.token);
             localStorage.setItem('adminId', dados.adminId);
@@ -34,8 +23,9 @@ const Login = () => {
             setFlashMessage('login realizado com sucesso!', 'success');
             navigate('/admin');
 
-        } catch (error) {
-            setFlashMessage(error instanceof Error ? error.message : String(error), 'error');
+        } catch (error: any) {
+            const mensagem = error.response?.data?.message || error.message || String(error);
+            setFlashMessage(mensagem, 'error');
         }
     };
 

@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../../components/formulario/Input';
 import Button from '../../components/formulario/Button';
 import useFlashMessage from '../../hooks/useFlashMessage';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from '../../services/api';
 
 const CriarPostagem = () => {
     const navigate = useNavigate();
@@ -70,27 +69,14 @@ const CriarPostagem = () => {
                 });
             }
 
-            const token = localStorage.getItem('token');
-
-            const resposta = await fetch(`${API_URL}/registros/criar`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: formData,
-            });
-
-            const dados = await resposta.json();
-
-            if (!resposta.ok) {
-                throw new Error(dados.message || 'Erro ao criar registro.');
-            }
+            await api.post('/registros/criar', formData);
 
             setFlashMessage('Registro criado com sucesso!', 'success');
             navigate('/admin');
 
-        } catch (error) {
-            setFlashMessage(error instanceof Error ? error.message : String(error), 'error');
+        } catch (error: any) {
+            const mensagem = error.response?.data?.message || error.message || String(error);
+            setFlashMessage(mensagem, 'error');
         }
     };
 
