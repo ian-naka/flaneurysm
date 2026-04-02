@@ -1,6 +1,6 @@
 // helpers/getUserByToken.ts
 import jwt from 'jsonwebtoken';
-import Admin from '../models/Admin';
+import User from '../models/User';
 
 const getUserByToken = async (token: string) => {
     if (!token) {
@@ -9,10 +9,10 @@ const getUserByToken = async (token: string) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: number };
-        const adminId = decoded.id;
-        const admin = await Admin.findByPk(adminId);
+        const userId = decoded.id;
+        const user = await User.findByPk(userId);
 
-        return admin;
+        return user;
     } catch (error) {
         return null;
     }

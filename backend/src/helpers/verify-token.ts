@@ -18,7 +18,7 @@ const checkToken = (req: Request, res: Response, next: NextFunction): void => {
     
     try {
         const verified = jwt.verify(token, process.env.JWT_SECRET as string);
-        (req as any).admin = verified; //injeta os dados do admin na requisição
+        (req as any).user = verified; //injeta os dados do admin na requisição
         next(); //pode passar para o RegistroController!
     } catch (error) {
         res.status(400).json({ message: 'Token inválido!' });
