@@ -62,12 +62,12 @@ export default class RegistroController {
             let galeriaPaths = null;
 
             if (files && files['thumb'] && files['thumb'].length > 0) {
-                thumbPath = files['thumb'][0].path;
+                thumbPath = files['thumb'][0].filename;
             }
 
             if (files && files['galeria'] && files['galeria'].length > 0) {
                 // Guarda os caminhos como JSON string para o banco de dados
-                galeriaPaths = JSON.stringify(files['galeria'].map(file => file.path));
+                galeriaPaths = JSON.stringify(files['galeria'].map(file => file.filename));
             }
 
             // Galeria requer imagens obrigatórias
