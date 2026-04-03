@@ -1,21 +1,35 @@
+//este arquivo é o formulário administrativo para gerenciar visualmente os textos e mídias da homepage do sistema.
 import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import Input from '../../components/formulario/Input';
 import Button from '../../components/formulario/Button';
 import useFlashMessage from '../../hooks/useFlashMessage';
 import api from '../../services/api';
 import ImageUploadPreview from '../../components/admin/ImageUploadPreview';
 
+const dashboardSchema = z.object({
+    heroTitulo: z.string(),
+    heroSubtitulo: z.string(),
+    highlightTitulo: z.string(),
+    card1Titulo: z.string(),
+    card2Titulo: z.string(),
+});
+
+type DashboardTexts = z.infer<typeof dashboardSchema>;
+
 
 interface DashboardConfigData {
     heroTitulo: string;
     heroSubtitulo: string;
-    heroImagem: string | null;
+    heroImagem: string[] | null;
     highlightTitulo: string;
-    highlightImagem: string | null;
+    highlightImagem: string[] | null;
     card1Titulo: string;
-    card1Imagem: string | null;
+    card1Imagem: string[] | null;
     card2Titulo: string;
-    card2Imagem: string | null;
+    card2Imagem: string[] | null;
 }
 
 const ConfiguracoesDashboard: React.FC = () => {
@@ -23,40 +37,48 @@ const ConfiguracoesDashboard: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
-    // campos de texto
-    const [heroTitulo, setHeroTitulo] = useState('');
-    const [heroSubtitulo, setHeroSubtitulo] = useState('');
-    const [highlightTitulo, setHighlightTitulo] = useState('');
-    const [card1Titulo, setCard1Titulo] = useState('');
-    const [card2Titulo, setCard2Titulo] = useState('');
+    const { register, handleSubmit: rhfSubmit, reset } = useForm<DashboardTexts>({
+        resolver: zodResolver(dashboardSchema),
+        defaultValues: {
+            heroTitulo: '',
+            heroSubtitulo: '',
+            highlightTitulo: '',
+            card1Titulo: '',
+            card2Titulo: '',
+        }
+    });
 
-    // arquivos de imagem
-    const [heroImagem, setHeroImagem] = useState<File | null>(null);
-    const [highlightImagem, setHighlightImagem] = useState<File | null>(null);
-    const [card1Imagem, setCard1Imagem] = useState<File | null>(null);
-    const [card2Imagem, setCard2Imagem] = useState<File | null>(null);
+    //arquivos de imagem localmente segurados para envio (arrays de Blobs)
+    const [heroImagem, setHeroImagem] = useState<Blob[]>([]);
+    const [highlightImagem, setHighlightImagem] = useState<Blob[]>([]);
+    const [card1Imagem, setCard1Imagem] = useState<Blob[]>([]);
+    const [card2Imagem, setCard2Imagem] = useState<Blob[]>([]);
 
-    // previews das imagens já salvas
-    const [heroImagemAtual, setHeroImagemAtual] = useState<string | null>(null);
-    const [highlightImagemAtual, setHighlightImagemAtual] = useState<string | null>(null);
-    const [card1ImagemAtual, setCard1ImagemAtual] = useState<string | null>(null);
-    const [card2ImagemAtual, setCard2ImagemAtual] = useState<string | null>(null);
+    //previews das imagens já salvas no db (arrays de strings vindas do json)
+    const [heroImagemAtual, setHeroImagemAtual] = useState<string[]>([]);
+    const [highlightImagemAtual, setHighlightImagemAtual] = useState<string[]>([]);
+    const [card1ImagemAtual, setCard1ImagemAtual] = useState<string[]>([]);
+    const [card2ImagemAtual, setCard2ImagemAtual] = useState<string[]>([]);
 
-    // busca as configurações atuais ao montar o componente
+    //busca as configurações atuais da api assim que entrar na aba administrativa
     useEffect(() => {
         const fetchConfig = async () => {
             try {
                 const resposta = await api.get('/dashboard-config');
                 const dados: DashboardConfigData = resposta.data;
-                    setHeroTitulo(dados.heroTitulo || '');
-                    setHeroSubtitulo(dados.heroSubtitulo || '');
-                    setHighlightTitulo(dados.highlightTitulo || '');
-                    setCard1Titulo(dados.card1Titulo || '');
-                    setCard2Titulo(dados.card2Titulo || '');
-                    setHeroImagemAtual(dados.heroImagem);
-                    setHighlightImagemAtual(dados.highlightImagem);
-                    setCard1ImagemAtual(dados.card1Imagem);
-                    setCard2ImagemAtual(dados.card2Imagem);
+                
+                reset({
+                    heroTitulo: dados.heroTitulo || '',
+                    heroSubtitulo: dados.heroSubtitulo || '',
+                    highlightTitulo: dados.highlightTitulo || '',
+                    card1Titulo: dados.card1Titulo || '',
+                    card2Titulo: dados.card2Titulo || '',
+                });
+
+                setHeroImagemAtual(dados.heroImagem ? (typeof dados.heroImagem === 'string' ? JSON.parse(dados.heroImagem) : dados.heroImagem) : []);
+                setHighlightImagemAtual(dados.highlightImagem ? (typeof dados.highlightImagem === 'string' ? JSON.parse(dados.highlightImagem) : dados.highlightImagem) : []);
+                setCard1ImagemAtual(dados.card1Imagem ? (typeof dados.card1Imagem === 'string' ? JSON.parse(dados.card1Imagem) : dados.card1Imagem) : []);
+                setCard2ImagemAtual(dados.card2Imagem ? (typeof dados.card2Imagem === 'string' ? JSON.parse(dados.card2Imagem) : dados.card2Imagem) : []);
             } catch (error) {
                 console.error('Erro ao buscar configurações:', error);
             } finally {
@@ -64,41 +86,39 @@ const ConfiguracoesDashboard: React.FC = () => {
             }
         };
         fetchConfig();
-    }, []);
+    }, [reset]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const onSubmit = async (data: DashboardTexts) => {
         setSaving(true);
 
         try {
             const formData = new FormData();
-            formData.append('heroTitulo', heroTitulo);
-            formData.append('heroSubtitulo', heroSubtitulo);
-            formData.append('highlightTitulo', highlightTitulo);
-            formData.append('card1Titulo', card1Titulo);
-            formData.append('card2Titulo', card2Titulo);
+            formData.append('heroTitulo', data.heroTitulo);
+            formData.append('heroSubtitulo', data.heroSubtitulo);
+            formData.append('highlightTitulo', data.highlightTitulo);
+            formData.append('card1Titulo', data.card1Titulo);
+            formData.append('card2Titulo', data.card2Titulo);
 
-            if (heroImagem) formData.append('heroImagem', heroImagem);
-            if (highlightImagem) formData.append('highlightImagem', highlightImagem);
-            if (card1Imagem) formData.append('card1Imagem', card1Imagem);
-            if (card2Imagem) formData.append('card2Imagem', card2Imagem);
+            heroImagem.forEach((b, i) => formData.append('heroImagem', b, `hero-${i}.jpg`));
+            highlightImagem.forEach((b, i) => formData.append('highlightImagem', b, `highlight-${i}.jpg`));
+            card1Imagem.forEach((b, i) => formData.append('card1Imagem', b, `card1-${i}.jpg`));
+            card2Imagem.forEach((b, i) => formData.append('card2Imagem', b, `card2-${i}.jpg`));
 
             const resposta = await api.put('/dashboard-config', formData);
-            const dados = resposta.data;
+            const dadosRes = resposta.data;
 
             setFlashMessage('Configurações salvas com sucesso!', 'success');
 
-            // atualiza as previews das imagens que acabaram de ser enviadas
-            if (heroImagem) setHeroImagemAtual(dados.config?.heroImagem || null);
-            if (highlightImagem) setHighlightImagemAtual(dados.config?.highlightImagem || null);
-            if (card1Imagem) setCard1ImagemAtual(dados.config?.card1Imagem || null);
-            if (card2Imagem) setCard2ImagemAtual(dados.config?.card2Imagem || null);
+            if (heroImagem.length > 0) setHeroImagemAtual(dadosRes.config?.heroImagem || []);
+            if (highlightImagem.length > 0) setHighlightImagemAtual(dadosRes.config?.highlightImagem || []);
+            if (card1Imagem.length > 0) setCard1ImagemAtual(dadosRes.config?.card1Imagem || []);
+            if (card2Imagem.length > 0) setCard2ImagemAtual(dadosRes.config?.card2Imagem || []);
 
             // limpa os inputs de arquivo após o sucesso
-            setHeroImagem(null);
-            setHighlightImagem(null);
-            setCard1Imagem(null);
-            setCard2Imagem(null);
+            setHeroImagem([]);
+            setHighlightImagem([]);
+            setCard1Imagem([]);
+            setCard2Imagem([]);
 
         } catch (error: any) {
             const mensagem = error.response?.data?.message || error.message || String(error);
@@ -115,11 +135,8 @@ const ConfiguracoesDashboard: React.FC = () => {
             </div>
         );
     }
-
-
-
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <form onSubmit={rhfSubmit(onSubmit)} className="flex flex-col gap-6">
 
             {/* Seção: Hero */}
             <div className="border border-gray-200 rounded-[14px] overflow-hidden">
@@ -133,8 +150,7 @@ const ConfiguracoesDashboard: React.FC = () => {
                             type="text"
                             id="heroTitulo"
                             placeholder="TEXTO EM DESTAQUE"
-                            value={heroTitulo}
-                            onChange={(e) => setHeroTitulo(e.target.value)}
+                            {...register('heroTitulo')}
                         />
                     </div>
                     <div>
@@ -143,11 +159,10 @@ const ConfiguracoesDashboard: React.FC = () => {
                             type="text"
                             id="heroSubtitulo"
                             placeholder="subtitulo, descrição, data..."
-                            value={heroSubtitulo}
-                            onChange={(e) => setHeroSubtitulo(e.target.value)}
+                            {...register('heroSubtitulo')}
                         />
                     </div>
-                    <ImageUploadPreview label="Imagem do Hero" imagemAtual={heroImagemAtual} onChange={setHeroImagem} />
+                    <ImageUploadPreview label="Imagem do Hero" imagensSalvas={heroImagemAtual} arquivosNovos={heroImagem} onChangeNovos={setHeroImagem} />
                 </div>
             </div>
 
@@ -163,11 +178,10 @@ const ConfiguracoesDashboard: React.FC = () => {
                             type="text"
                             id="highlightTitulo"
                             placeholder="GRUPO DE FOTOS EM DESTAQUE"
-                            value={highlightTitulo}
-                            onChange={(e) => setHighlightTitulo(e.target.value)}
+                            {...register('highlightTitulo')}
                         />
                     </div>
-                    <ImageUploadPreview label="Imagem de Destaque" imagemAtual={highlightImagemAtual} onChange={setHighlightImagem} />
+                    <ImageUploadPreview label="Imagem de Destaque" imagensSalvas={highlightImagemAtual} arquivosNovos={highlightImagem} onChangeNovos={setHighlightImagem} />
                 </div>
             </div>
 
@@ -186,11 +200,10 @@ const ConfiguracoesDashboard: React.FC = () => {
                                 type="text"
                                 id="card1Titulo"
                                 placeholder="TEXTO EM DESTAQUE MENOR 1"
-                                value={card1Titulo}
-                                onChange={(e) => setCard1Titulo(e.target.value)}
+                                {...register('card1Titulo')}
                             />
                         </div>
-                        <ImageUploadPreview label="Imagem Card 1" imagemAtual={card1ImagemAtual} onChange={setCard1Imagem} />
+                        <ImageUploadPreview label="Imagem Card 1" imagensSalvas={card1ImagemAtual} arquivosNovos={card1Imagem} onChangeNovos={setCard1Imagem} />
                     </div>
                     {/* Card 2 */}
                     <div className="flex flex-col gap-3">
@@ -201,11 +214,10 @@ const ConfiguracoesDashboard: React.FC = () => {
                                 type="text"
                                 id="card2Titulo"
                                 placeholder="TEXTO EM DESTAQUE MENOR 2"
-                                value={card2Titulo}
-                                onChange={(e) => setCard2Titulo(e.target.value)}
+                                {...register('card2Titulo')}
                             />
                         </div>
-                        <ImageUploadPreview label="Imagem Card 2" imagemAtual={card2ImagemAtual} onChange={setCard2Imagem} />
+                        <ImageUploadPreview label="Imagem Card 2" imagensSalvas={card2ImagemAtual} arquivosNovos={card2Imagem} onChangeNovos={setCard2Imagem} />
                     </div>
                 </div>
             </div>

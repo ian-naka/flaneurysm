@@ -1,3 +1,4 @@
+//este arquivo renderiza a tela de login administrativa, validando as credenciais e injetando tokens JWT no localstorage.
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import Input from '../../components/formulario/Input';
@@ -10,6 +11,7 @@ const Login = () => {
     const navigate = useNavigate();
     const { setFlashMessage } = useFlashMessage();
 
+    //função disparada ao enviar o formulário
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -18,7 +20,7 @@ const Login = () => {
             const dados = resposta.data;
 
             localStorage.setItem('token', dados.token);
-            localStorage.setItem('adminId', dados.adminId);
+            localStorage.setItem('userId', dados.userId);
 
             setFlashMessage('login realizado com sucesso!', 'success');
             navigate('/admin');
