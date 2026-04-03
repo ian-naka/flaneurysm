@@ -1,3 +1,4 @@
+//este arquivo é o container mestre da dashboard pública, orquestrando a injeção dos dados dinâmicos em todas as seções fotográficas e de texto.
 import { useState, useEffect } from 'react';
 import Sidebar from '../../components/sidebar/Sidebar';
 import api from '../../services/api';
@@ -10,13 +11,13 @@ const API_URL = import.meta.env.VITE_API_URL;
 interface DashboardConfigData {
     heroTitulo: string;
     heroSubtitulo: string;
-    heroImagem: string | null;
+    heroImagem: string[] | null;
     highlightTitulo: string;
-    highlightImagem: string | null;
+    highlightImagem: string[] | null;
     card1Titulo: string;
-    card1Imagem: string | null;
+    card1Imagem: string[] | null;
     card2Titulo: string;
-    card2Imagem: string | null;
+    card2Imagem: string[] | null;
 }
 
 const Dashboard = () => {
@@ -27,7 +28,14 @@ const Dashboard = () => {
       const fetchConfig = async () => {
           try {
               const res = await api.get('/dashboard-config');
-              setConfig(res.data);
+              // Parse image arrays if they come as string
+              const configData = res.data;
+              if (typeof configData.heroImagem === 'string') configData.heroImagem = JSON.parse(configData.heroImagem);
+              if (typeof configData.highlightImagem === 'string') configData.highlightImagem = JSON.parse(configData.highlightImagem);
+              if (typeof configData.card1Imagem === 'string') configData.card1Imagem = JSON.parse(configData.card1Imagem);
+              if (typeof configData.card2Imagem === 'string') configData.card2Imagem = JSON.parse(configData.card2Imagem);
+
+              setConfig(configData);
           } catch (error) {
               console.error("Erro ao carregar configurações da dashboard:", error);
           }
@@ -37,16 +45,16 @@ const Dashboard = () => {
 
   const heroTitulo = config?.heroTitulo || "TEXTO EM DESTAQUE";
   const heroSubtitulo = config?.heroSubtitulo || "subtitulo, descrição, data, bla bla bla";
-  const heroImagem = config?.heroImagem ? `${API_URL}/uploads/${config.heroImagem}` : null;
+  const heroImagem = config?.heroImagem || [];
 
   const highlightTitulo = config?.highlightTitulo || "GRUPO DE FOTOS EM DESTAQUE";
-  const highlightImagem = config?.highlightImagem ? `${API_URL}/uploads/${config.highlightImagem}` : null;
+  const highlightImagem = config?.highlightImagem || [];
 
   const card1Titulo = config?.card1Titulo || "TEXTO EM DESTAQUE MENOR 1";
-  const card1Imagem = config?.card1Imagem ? `${API_URL}/uploads/${config.card1Imagem}` : null;
+  const card1Imagem = config?.card1Imagem && config.card1Imagem.length > 0 ? `${API_URL}/uploads/${config.card1Imagem[0]}` : null;
 
   const card2Titulo = config?.card2Titulo || "TEXTO EM DESTAQUE MENOR 2";
-  const card2Imagem = config?.card2Imagem ? `${API_URL}/uploads/${config.card2Imagem}` : null;
+  const card2Imagem = config?.card2Imagem && config.card2Imagem.length > 0 ? `${API_URL}/uploads/${config.card2Imagem[0]}` : null;
 
   return (
     <div className="flex bg-[#2c1d26] h-[100dvh] w-full font-['Inter',system-ui,sans-serif] overflow-hidden">
