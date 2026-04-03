@@ -1,0 +1,7 @@
+# Ignorar arquivos gerados pelo repomix e backups
+repomix.xml
+*.xml
+
+# Ignorar imagens enviadas (evitar inflar o repositório git)
+*.jpg
+*.jpeg
