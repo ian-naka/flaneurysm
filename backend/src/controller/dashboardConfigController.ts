@@ -1,12 +1,13 @@
+//este arquivo é o controlador que gerencia a busca e atualização das configurações e imagens da dashboard.
 import { Request, Response } from 'express';
 import DashboardConfig from '../models/DashboardConfig';
 
 export default class DashboardConfigController {
 
-    // busca a configuração atual da dashboard (rota pública)
+    //busca a configuração atual da dashboard (rota pública)
     static async buscar(_req: Request, res: Response): Promise<void> {
         try {
-            // busca ou cria o registro singleton (id=1)
+            //busca ou cria o registro singleton (id=1)
             const [config] = await DashboardConfig.findOrCreate({
                 where: { id: 1 },
                 defaults: {}
@@ -19,18 +20,18 @@ export default class DashboardConfigController {
         }
     }
 
-    // atualiza as configurações da dashboard (rota protegida)
+    //atualiza as configurações da dashboard (rota protegida)
     static async atualizar(req: Request, res: Response): Promise<void> {
         try {
             const { heroTitulo, heroSubtitulo, highlightTitulo, card1Titulo, card2Titulo } = req.body;
 
-            // busca ou cria o registro singleton
+            //busca ou cria o registro singleton
             const [config] = await DashboardConfig.findOrCreate({
                 where: { id: 1 },
                 defaults: {}
             });
 
-            // monta o objeto de update com os campos de texto
+            //monta o objeto de update com os campos de texto
             const updateData: any = {};
 
             if (heroTitulo !== undefined) updateData.heroTitulo = heroTitulo;
@@ -39,21 +40,21 @@ export default class DashboardConfigController {
             if (card1Titulo !== undefined) updateData.card1Titulo = card1Titulo;
             if (card2Titulo !== undefined) updateData.card2Titulo = card2Titulo;
 
-            // processa os arquivos de imagem enviados pelo multer
+            //processa os arquivos de imagem enviados pelo multer
             const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
             if (files) {
                 if (files['heroImagem'] && files['heroImagem'].length > 0) {
-                    updateData.heroImagem = files['heroImagem'][0].filename;
+                    updateData.heroImagem = files['heroImagem'].map((f) => f.filename);
                 }
                 if (files['highlightImagem'] && files['highlightImagem'].length > 0) {
-                    updateData.highlightImagem = files['highlightImagem'][0].filename;
+                    updateData.highlightImagem = files['highlightImagem'].map((f) => f.filename);
                 }
                 if (files['card1Imagem'] && files['card1Imagem'].length > 0) {
-                    updateData.card1Imagem = files['card1Imagem'][0].filename;
+                    updateData.card1Imagem = files['card1Imagem'].map((f) => f.filename);
                 }
                 if (files['card2Imagem'] && files['card2Imagem'].length > 0) {
-                    updateData.card2Imagem = files['card2Imagem'][0].filename;
+                    updateData.card2Imagem = files['card2Imagem'].map((f) => f.filename);
                 }
             }
 

@@ -1,3 +1,4 @@
+//este arquivo define o banco de dados via Sequelize para a tabela dashboard_config, onde ficam os textos e as referências aos arquivos upados da homepage.
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/conn';
 
@@ -6,13 +7,13 @@ class DashboardConfig extends Model {
   declare id: number;
   declare heroTitulo: string;
   declare heroSubtitulo: string;
-  declare heroImagem: string | null;
+  declare heroImagem: string[] | null;
   declare highlightTitulo: string;
-  declare highlightImagem: string | null;
+  declare highlightImagem: string[] | null;
   declare card1Titulo: string;
-  declare card1Imagem: string | null;
+  declare card1Imagem: string[] | null;
   declare card2Titulo: string;
-  declare card2Imagem: string | null;
+  declare card2Imagem: string[] | null;
 }
 
 DashboardConfig.init(
@@ -33,7 +34,7 @@ DashboardConfig.init(
       defaultValue: 'subtitulo, descrição, data, bla bla bla',
     },
     heroImagem: {
-      type: DataTypes.STRING,
+      type: DataTypes.JSON,
       allowNull: true,
     },
     highlightTitulo: {
@@ -42,7 +43,7 @@ DashboardConfig.init(
       defaultValue: 'GRUPO DE FOTOS EM DESTAQUE',
     },
     highlightImagem: {
-      type: DataTypes.STRING,
+      type: DataTypes.JSON,
       allowNull: true,
     },
     card1Titulo: {
@@ -51,7 +52,7 @@ DashboardConfig.init(
       defaultValue: 'TEXTO EM DESTAQUE MENOR 1',
     },
     card1Imagem: {
-      type: DataTypes.STRING,
+      type: DataTypes.JSON,
       allowNull: true,
     },
     card2Titulo: {
@@ -60,7 +61,7 @@ DashboardConfig.init(
       defaultValue: 'TEXTO EM DESTAQUE MENOR 2',
     },
     card2Imagem: {
-      type: DataTypes.STRING,
+      type: DataTypes.JSON,
       allowNull: true,
     },
   },

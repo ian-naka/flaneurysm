@@ -1,3 +1,4 @@
+//este arquivo é o ponto de entrada principal do backend, inicializando o express, middlewares e o servidor.
 import 'dotenv/config';
 import express, { Application } from 'express';
 import cors from 'cors';
@@ -28,7 +29,7 @@ app.use(helmet({
 
 app.use(cors({
     credentials: true,
-    origin: process.env.FRONTEND_URL
+    origin: [process.env.FRONTEND_URL as string, 'http://localhost:8080']
 }));
 
 app.use(express.json()); //permite ler o body em json
@@ -52,9 +53,9 @@ app.use('/auth', userRoutes);
 app.use('/registros', registroRoutes);
 app.use('/dashboard-config', dashboardConfigRoutes);
 
-//testa conexao com o banco
+//testa conexao com o banco e sincroniza
 conexaoBanco().then(async () => {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: true }); //atualiza sem dropar
     app.listen(PORT, () => {
         console.log(`Servidor rodando na porta: ${PORT}`);
     });
